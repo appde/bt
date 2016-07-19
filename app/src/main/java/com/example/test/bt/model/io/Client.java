@@ -97,7 +97,7 @@ public abstract class Client{
         readBuffer.flip();
         byte[] buff = new byte[1024];
         readBuffer.get(buff, 0, length);
-        System.out.println("Server said: " + new String(trim(buff)));
+        Log.d(TAG, "read: Server said: " + new String(trim(buff)));
 
         onDataReceived(trim(buff));
     }

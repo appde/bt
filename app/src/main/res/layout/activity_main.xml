@@ -10,17 +10,17 @@
     tools:context="com.example.test.bt.MainActivity">
 
     <TextView
-        android:id="@+id/descr"
+        android:id="@+id/properties_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!" />
 
     <Button
-        android:id="@+id/getProperties"
+        android:id="@+id/properties_button"
         android:paddingTop="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/descr"
+        android:layout_below="@id/properties_text_view"
         android:text="getProperties" />
 
     <Button
@@ -28,7 +28,7 @@
         android:paddingTop="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/getProperties"
+        android:layout_below="@id/properties_button"
         android:text="getProperties" />
 
 </RelativeLayout>

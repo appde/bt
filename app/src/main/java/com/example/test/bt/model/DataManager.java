@@ -1,5 +1,7 @@
 package com.example.test.bt.model;
 
+import android.icu.util.TimeUnit;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.example.test.bt.device.Server;
@@ -16,6 +18,7 @@ public class DataManager {
 
     private static final String TAG = DataManager.class.getName();
     private static DataManager dataManager;
+    private volatile static boolean lock = false;
 
     private DataManager() {
         Server device = new Server();
@@ -32,7 +35,7 @@ public class DataManager {
         Thread thread = new Thread(test1);
         thread.start();*/
 
-        send(new GetPropertiesCommand()).subscribe();
+        //send(new GetPropertiesCommand()).subscribe();
     }
 
     public static DataManager getInstance() {
@@ -42,20 +45,30 @@ public class DataManager {
         return dataManager;
     }
 
-    public Observable<Command> uiSend(Command command) {
-        return null;
-     //   return Observable.defer(() -> send(command));
+    private synchronized static void lock() {
+        lock = true;
     }
 
-    public BlockingObservable<Command> send(final Command command) {
+    private synchronized static void unlock() {
+        lock = false;
+    }
+
+    public synchronized static boolean readLock() {
+        return lock;
+    }
+
+
+    public Observable<Command> send(final Command command) {
+        //lock();
+        Log.d(TAG, "send: Thread" + Thread.currentThread());
         return Observable.create(new Observable.OnSubscribe<Command>() {
             @Override
             public void call(final Subscriber<? super Command> subscriber) {
                 new Client(command.getData()) {
                     @Override
                     public void onDataReceived(byte[] data) {
-                        Log.d(TAG, "onDataReceived: Thread" + Thread.currentThread());
-                        Log.d(TAG, "onDataReceived: " + new String(data));
+                        Log.d(TAG, "send: onDataReceived: Thread" + Thread.currentThread());
+                        Log.d(TAG, "send: onDataReceived: " + new String(data));
                         command.setAnswer(data);
                         subscriber.onNext(command);
                         subscriber.onCompleted();
@@ -63,7 +76,8 @@ public class DataManager {
                 };
             }
         }).subscribeOn(Schedulers.newThread())
-                .single().toBlocking();
+                .timeout(5, java.util.concurrent.TimeUnit.SECONDS)
+                //.doOnTerminate(() -> unlock())
+                .single();
     }
-
 }
