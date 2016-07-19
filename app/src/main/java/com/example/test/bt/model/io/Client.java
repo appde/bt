@@ -11,19 +11,21 @@ import java.nio.channels.SocketChannel;
 import java.util.Arrays;
 import java.util.Iterator;
 
-public class Client implements Runnable {
+public abstract class Client{
 
     private static final String TAG = Client.class.getName();
 
-    private String message = "";
+    private byte[] message;
     private Selector selector;
 
-    public Client(String message) {
+    public Client(byte[] message) {
         this.message = message;
+        init();
     }
 
-    @Override
-    public void run() {
+    public abstract void onDataReceived(byte[] data);
+
+    public void init() {
         SocketChannel channel;
         try {
             selector = Selector.open();
@@ -57,19 +59,18 @@ public class Client implements Runnable {
                     }
                 }
             }
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         } finally {
             close();
         }
     }
 
+
     private void close() {
         try {
             selector.close();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -82,13 +83,13 @@ public class Client implements Runnable {
         try {
             length = channel.read(readBuffer);
         } catch (IOException e) {
-            System.out.println("Reading problem, closing connection");
+            Log.d(TAG, "read: Reading problem, closing connection");
             key.cancel();
             channel.close();
             return;
         }
         if (length == -1) {
-            System.out.println("Nothing was read from server");
+            Log.d(TAG, "read: Nothing was read from server");
             channel.close();
             key.cancel();
             return;
@@ -97,11 +98,13 @@ public class Client implements Runnable {
         byte[] buff = new byte[1024];
         readBuffer.get(buff, 0, length);
         System.out.println("Server said: " + new String(trim(buff)));
+
+        onDataReceived(trim(buff));
     }
 
     private void write(SelectionKey key) throws IOException {
         SocketChannel channel = (SocketChannel) key.channel();
-        channel.write(ByteBuffer.wrap(message.getBytes()));
+        channel.write(ByteBuffer.wrap(message));
 
         // lets get ready to read.
         key.interestOps(SelectionKey.OP_READ);
@@ -115,6 +118,7 @@ public class Client implements Runnable {
         channel.configureBlocking(false);
         channel.register(selector, SelectionKey.OP_WRITE);
     }
+
 
     private byte[] trim(byte[] data) {
         for (int i = 0; i < data.length; i++) {

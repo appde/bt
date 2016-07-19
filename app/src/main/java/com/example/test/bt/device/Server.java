@@ -2,6 +2,9 @@ package com.example.test.bt.device;
 
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -13,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 
 public class Server implements Runnable {
 
@@ -188,9 +192,12 @@ public class Server implements Runnable {
         SocketChannel socketChannel = serverSocketChannel.accept();
         socketChannel.configureBlocking(false);
 
-        socketChannel.register(selector, SelectionKey.OP_WRITE);
-        byte[] hello = new String("Hello from server/n").getBytes();
-        dataTracking.put(socketChannel, hello);
+        Log.d(TAG, "accept: ");
+        socketChannel.register(selector, SelectionKey.OP_READ);
+
+        //socketChannel.register(selector, SelectionKey.OP_WRITE);
+        //byte[] hello = new String("Hello from server/n").getBytes();
+        //dataTracking.put(socketChannel, hello);
     }
 
     /**
@@ -224,10 +231,31 @@ public class Server implements Runnable {
         readBuffer.get(data, 0, read);
         Log.d(TAG, "read: Received: " + new String(trim(data)));
 
-        echo(key, data);
+        answer(key, data);
     }
 
-    private void echo(SelectionKey key, byte[] data) {
+    //Preparing answer of command
+    private void answer(SelectionKey key, byte[] data) {
+
+        JSONObject root = null;
+
+        try {
+            //Adding some answering delay
+            Thread.currentThread().sleep(5000 + new Random().nextInt(4) * 100);
+
+            root = new JSONObject(new String(data));
+
+            if (root.has("getProperties")) {
+                int id = root.getInt("getProperties");
+                root.put("value", "properties description " + id);
+
+                data = root.toString().getBytes();
+            }
+
+        } catch (InterruptedException | JSONException e) {
+            e.printStackTrace();
+        }
+
         SocketChannel socketChannel = (SocketChannel) key.channel();
         dataTracking.put(socketChannel, data);
         key.interestOps(SelectionKey.OP_WRITE);

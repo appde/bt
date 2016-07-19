@@ -10,7 +10,25 @@
     tools:context="com.example.test.bt.MainActivity">
 
     <TextView
+        android:id="@+id/descr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!" />
+
+    <Button
+        android:id="@+id/getProperties"
+        android:paddingTop="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/descr"
+        android:text="getProperties" />
+
+    <Button
+        android:id="@+id/getProperties2"
+        android:paddingTop="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/getProperties"
+        android:text="getProperties" />
+
 </RelativeLayout>
