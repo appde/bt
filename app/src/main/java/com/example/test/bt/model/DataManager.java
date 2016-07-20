@@ -12,6 +12,9 @@ import rx.schedulers.Schedulers;
 
 public class DataManager {
 
+    public static final int SERVER_TIMEOUT_MIN_MS = 100;
+    public static final int SEND_TIMEOUT_S = 1;
+
     private static final String TAG = DataManager.class.getName();
     private static DataManager dataManager;
 
@@ -45,7 +48,7 @@ public class DataManager {
                 };
             }
         }).subscribeOn(Schedulers.newThread())
-                .timeout(1, java.util.concurrent.TimeUnit.SECONDS)
+                .timeout(DataManager.SEND_TIMEOUT_S, java.util.concurrent.TimeUnit.SECONDS)
                 .single();
     }
 }

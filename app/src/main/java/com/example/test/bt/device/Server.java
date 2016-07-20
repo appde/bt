@@ -2,6 +2,8 @@ package com.example.test.bt.device;
 
 import android.util.Log;
 
+import com.example.test.bt.model.DataManager;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -165,7 +167,7 @@ public class Server implements Runnable {
 
         try {
             //Adding some answering delay: 100-500 ms
-            Thread.currentThread().sleep(100 + new Random().nextInt(4) * 100);
+            Thread.sleep(DataManager.SERVER_TIMEOUT_MIN_MS + new Random().nextInt(4) * 100);
 
             root = new JSONObject(new String(data));
 

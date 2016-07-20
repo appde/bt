@@ -26,19 +26,20 @@ public class MainBTPresenter implements BTPresenter {
         DataManager.getInstance()
                 .send(new GetPropertiesCommand())
                 .map(Command::getAnswer)
-                .timeout(1, TimeUnit.SECONDS)
+                .timeout(DataManager.SEND_TIMEOUT_S, TimeUnit.SECONDS)
                 .onErrorReturn(throwable -> "N\\A".getBytes())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(bytes -> btView.updateProperties(new String(bytes)));
     }
 
+
     @Override
     public void writeDBRecord(int tableId, int recordId, String data) {
         DataManager.getInstance()
                 .send(new WriteDBRecordCommand(tableId, recordId, data))
                 .map(Command::getAnswer)
-                .timeout(1, TimeUnit.SECONDS)
+                .timeout(DataManager.SEND_TIMEOUT_S, TimeUnit.SECONDS)
                 .onErrorReturn(throwable -> "N\\A".getBytes())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
