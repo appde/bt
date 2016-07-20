@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity implements BTView {
     private BTPresenter btPresenter;
     private Button propButton;
     TextView propTextView;
+    TextView dbTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,11 +29,13 @@ public class MainActivity extends AppCompatActivity implements BTView {
 
         propTextView = (TextView) findViewById(R.id.properties_text_view);
 
-
         propButton = (Button) findViewById(R.id.properties_button);
         propButton.setOnClickListener(view -> btPresenter.getProperties());
 
-        Button getPropButton2 = (Button) findViewById(R.id.getProperties2);
+        dbTextView = (TextView) findViewById(R.id.db_record_text_view);
+
+        Button dbButton = (Button) findViewById(R.id.db_record_button);
+        dbButton.setOnClickListener(view -> btPresenter.writeDBRecord(1, 2, "db write"));
 
         DataManager.getInstance();
     }
@@ -43,7 +46,14 @@ public class MainActivity extends AppCompatActivity implements BTView {
     }
 
     @Override
-    public void setProperties(String properties) {
+    public void updateProperties(String properties) {
         propTextView.setText(properties);
     }
+
+    @Override
+    public void updateWriteDBAnswer(String properties) {
+        dbTextView.setText(properties);
+    }
+
+
 }

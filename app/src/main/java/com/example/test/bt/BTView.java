@@ -2,6 +2,8 @@ package com.example.test.bt;
 
 public interface BTView {
 
-    void setProperties(String properties);
+    void updateProperties(String properties);
+
+    void updateWriteDBAnswer(String properties);
 
 }

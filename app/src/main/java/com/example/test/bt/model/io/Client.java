@@ -48,7 +48,7 @@ public abstract class Client{
                     if (!key.isValid()) continue;
 
                     if (key.isConnectable()) {
-                        Log.d(TAG, "run: I am connected to the server");
+                        Log.d(TAG, "run: connect");
                         connect(key);
                     }
                     if (key.isWritable()) {
@@ -106,7 +106,6 @@ public abstract class Client{
         SocketChannel channel = (SocketChannel) key.channel();
         channel.write(ByteBuffer.wrap(message));
 
-        // lets get ready to read.
         key.interestOps(SelectionKey.OP_READ);
     }
 

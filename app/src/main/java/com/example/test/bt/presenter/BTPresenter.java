@@ -8,4 +8,6 @@ public interface BTPresenter {
 
     void getProperties();
 
+    void writeDBRecord(int tableId, int recordId, String data);
+
 }
