@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements BTView {
         Button dbButton = (Button) findViewById(R.id.db_record_button);
         dbButton.setOnClickListener(view -> btPresenter.writeDBRecord(1, 2, "db write"));
 
+
         DataManager.getInstance();
     }
 

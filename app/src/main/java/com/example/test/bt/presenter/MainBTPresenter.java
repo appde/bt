@@ -8,6 +8,7 @@ import com.example.test.bt.model.interchange.WriteDBRecordCommand;
 
 import java.util.concurrent.TimeUnit;
 
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -34,7 +35,7 @@ public class MainBTPresenter implements BTPresenter {
     }
 
 
-    @Override
+    /*@Override
     public void writeDBRecord(int tableId, int recordId, String data) {
         DataManager.getInstance()
                 .send(new WriteDBRecordCommand(tableId, recordId, data))
@@ -44,6 +45,24 @@ public class MainBTPresenter implements BTPresenter {
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(bytes -> btView.updateWriteDBAnswer(new String(bytes)));
+    }*/
+
+    @Override
+    public void writeDBRecord(int tableId, int recordId, String data) {
+        Observable.just(null)
+                .onErrorReturn(throwable -> null)
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe(() -> {
+                    try {
+                        DataManager.getInstance().drop
+                                .put(new WriteDBRecordCommand(tableId, recordId, data));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                })
+                .zipWith(DataManager.getInstance().busIn(), (o, command) -> command)
+                .filter(command1 -> true);
+
     }
 
 
