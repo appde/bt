@@ -22,8 +22,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center"
+        android:layout_weight="2"
+        android:orientation="horizontal"
         android:paddingBottom="16dp"
         android:paddingTop="16dp">
 
@@ -31,6 +32,7 @@
             android:id="@+id/properties_imageView"
             android:layout_width="16dp"
             android:layout_height="16dp"
+            android:layout_marginRight="16dp"
             android:background="@android:color/holo_green_light"
             android:paddingBottom="64dp" />
 
@@ -55,8 +57,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center"
+        android:orientation="horizontal"
         android:paddingBottom="16dp"
         android:paddingTop="16dp">
 
@@ -64,17 +66,75 @@
             android:id="@+id/db_record_imageView"
             android:layout_width="16dp"
             android:layout_height="16dp"
+            android:layout_marginRight="16dp"
             android:background="@android:color/holo_green_light"
             android:paddingBottom="64dp" />
 
-
         <Button
-        android:id="@+id/db_record_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="16dp"
-        android:text="write db record" />
+            android:id="@+id/db_record_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:text="write db record" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:paddingBottom="8dp"
+            android:paddingTop="32dp"
+            android:text="Legend:"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:paddingBottom="8dp"
+            android:text="Last command state" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@android:color/holo_green_light" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Successfull" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@android:color/holo_orange_light" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Unsuccessfull" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

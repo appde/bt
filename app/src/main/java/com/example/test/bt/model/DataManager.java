@@ -21,7 +21,7 @@ import rx.subjects.PublishSubject;
 
 public class DataManager {
 
-    public static final int SERVER_TIMEOUT_MIN_MS = 5000;
+    public static final int SERVER_TIMEOUT_MIN_MS = 2000;
     public static final int SEND_TIMEOUT_S = 10;
 
     public BlockingQueue<Command> drop;
@@ -55,7 +55,7 @@ public class DataManager {
     }
 
     // TODO: 20/07/2016 add consecutive performing, one command at a time
-    public Observable<Command> send(final Command command) {
+    public Observable<Command> send(Command command) {
         return Observable.create(new Observable.OnSubscribe<Command>() {
             @Override
             public void call(final Subscriber<? super Command> subscriber) {
@@ -125,7 +125,7 @@ public class DataManager {
     }
 
     private Subscription testCommandSend() {
-        return Observable.interval(100, TimeUnit.MILLISECONDS)
+        return Observable.interval(10, TimeUnit.MILLISECONDS)
                 .subscribe(aLong -> {
                     try {
                         Log.d(TAG, "testCommandSend: " + aLong);

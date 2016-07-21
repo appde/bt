@@ -9,6 +9,7 @@ import com.example.test.bt.model.interchange.GetPropertiesCommand;
 import com.example.test.bt.model.interchange.WriteDBRecordCommand;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -19,6 +20,8 @@ public class MainBTPresenter implements BTPresenter {
 
     private static final String TAG = MainBTPresenter.class.getName();
     private BTView btView;
+    private static final AtomicInteger maxDBWriteCommandId = new AtomicInteger(0);
+    private static final AtomicInteger maxPropCommandId = new AtomicInteger(0);
 
     @Override
     public void attachView(BTView btView) {
@@ -27,79 +30,78 @@ public class MainBTPresenter implements BTPresenter {
 
     @Override
     public void getProperties() {
-        DataManager.getInstance()
-                .send(new GetPropertiesCommand())
-                .map(Command::getAnswer)
-                .timeout(DataManager.SEND_TIMEOUT_S, TimeUnit.SECONDS)
-                .onErrorReturn(throwable -> "N\\A".getBytes())
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(bytes -> btView.updateProperties(new String(bytes)));
+        perform(new GetPropertiesCommand());
     }
-
-
-    /*@Override
-    public void writeDBRecord(int tableId, int recordId, String data) {
-        DataManager.getInstance()
-                .send(new WriteDBRecordCommand(tableId, recordId, data))
-                .map(Command::getAnswer)
-                .timeout(DataManager.SEND_TIMEOUT_S, TimeUnit.SECONDS)
-                .onErrorReturn(throwable -> "N\\A".getBytes())
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(bytes -> btView.updateWriteDBAnswer(new String(bytes)));
-    }*/
 
     @Override
     public void writeDBRecord(int tableId, int recordId, String data) {
-        Command command = new WriteDBRecordCommand(tableId, recordId, data);
-        int commandId = command.getId();
-
-        put(command)
-                .zipWith(DataManager.getInstance().busIn(), (command3, command4) -> {
-                    if (command3.isErr()) {
-                        return command3;
-                    } else {
-                        return command4;
-                    }
-                })
-                .filter(command1 -> {
-                    Log.d(TAG, "writeDBRecord: filter: command1.getId() == commandId: " + command1.getId() + "=" + commandId);
-                    return command1.getId() == commandId || command1.isErr();
-                })
-                .timeout(10, TimeUnit.SECONDS)
-                .onErrorReturn(throwable -> null)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(command2 -> {
-                    if (command2 == null) {
-                        Log.d(TAG, "writeDBRecord: command2: Err");
-                        btView.updateWriteDBAnswer("N\\A");
-                    } else if (command2.isErr()) {
-                        Log.d(TAG, "writeDBRecord: command2.isErr()=true");
-                        btView.indicateWriteDBAnswer(false);
-                    } else {
-                        Log.d(TAG, "writeDBRecord: command2: " + command2.getId());
-                        btView.updateWriteDBAnswer(new String(command2.getData()));
-                        btView.indicateWriteDBAnswer(true);
-                    }
-                });
+        perform(new WriteDBRecordCommand(tableId, recordId, data));
     }
 
-    /*private void put(Command command) {
-        Observable.just(command)
-                .subscribeOn(Schedulers.newThread())
-                .subscribe(command1 -> {
-                    try {
-                        boolean offered = DataManager.getInstance().drop
-                                .offer(command1, 1, TimeUnit.SECONDS);
-                        Log.d(TAG, "put: offered = " + offered);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                });
-    }*/
+    public void perform(Command command) {
+        boolean propType = command instanceof GetPropertiesCommand;
+        if (propType) {
+            if (command.getId() > maxPropCommandId.get()) {
+                maxPropCommandId.set(command.getId());
+            }
+        } else {
+            if (command.getId() > maxDBWriteCommandId.get()) {
+                maxDBWriteCommandId.set(command.getId());
+            }
+        }
+
+        put(command)
+                .subscribe(command0 -> {
+                            boolean isPropType = command0 instanceof GetPropertiesCommand;
+
+                            if (command0.isErr()) {
+                                Log.d(TAG, "writeDBRecord: command0.isErr()=true command0.getId()=" + command0.getId());
+                                if (isPropType) {
+                                    btView.indicateProperties(false);
+                                } else {
+                                    btView.indicateWriteDBAnswer(false);
+                                }
+                            } else {
+                                DataManager.getInstance().busIn()
+                                        .filter(command1 -> command1.getId() == command0.getId())
+                                        .take(1)
+                                        .timeout(10, TimeUnit.SECONDS)
+                                        .onErrorReturn(throwable -> null)
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(command2 -> {
+                                            if (command2 == null) {
+                                                Log.d(TAG, "writeDBRecord: command2: Err");
+                                                if (isPropType) {
+                                                    btView.updateProperties("N\\A");
+                                                    btView.indicateProperties(false);
+                                                } else {
+                                                    btView.updateWriteDBAnswer("N\\A");
+                                                    btView.indicateWriteDBAnswer(false);
+                                                }
+                                            } else {
+                                                Log.d(TAG, "writeDBRecord: command2: " + command2.getId());
+                                                if (isPropType) {
+                                                    btView.updateProperties(new String(command2.getAnswer()));
+                                                } else {
+                                                    btView.updateWriteDBAnswer(new String(command2.getAnswer()));
+                                                }
+                                                if (isPropType && command2.getId() == maxPropCommandId.get()) {
+                                                    btView.indicateProperties(true);
+                                                } else if (!isPropType && command2.getId() == maxDBWriteCommandId.get()) {
+                                                    btView.indicateWriteDBAnswer(true);
+                                                }
+                                            }
+                                        });
+                            }
+
+
+                        }
+
+                );
+    }
 
     private Observable<Command> put(final Command command) {
+
         return Observable.create(new Observable.OnSubscribe<Command>() {
             @Override
             public void call(Subscriber<? super Command> subscriber) {
@@ -111,7 +113,7 @@ public class MainBTPresenter implements BTPresenter {
                     e.printStackTrace();
                 }
 
-                Log.d(TAG, "put: offered = " + offered);
+                Log.d(TAG, "put: offered = " + offered + " id: " + command.getId());
 
                 if (!offered) {
                     command.setErr(true);
@@ -119,8 +121,11 @@ public class MainBTPresenter implements BTPresenter {
                 subscriber.onNext(command);
                 subscriber.onCompleted();
             }
-        });
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
+
+
 }
 
 

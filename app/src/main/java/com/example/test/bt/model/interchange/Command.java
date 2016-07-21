@@ -6,20 +6,37 @@ public abstract class Command {
 
     private int id;
     private boolean err = false;
+    private byte[] data = new byte[0];
+    private byte[] answer = new byte[0];
+    private static final AtomicInteger atomicInteger = new AtomicInteger();
 
     public Command() {
         genId();
     }
 
-    private static final AtomicInteger atomicInteger = new AtomicInteger();
+    public static int getCurId() {
+        return atomicInteger.get();
+    }
 
-    public abstract byte[] getData();
+    public byte[] getData() {
+        return data;
+    }
 
-    public abstract void setData(byte[] data);
+    public void setData(byte[] data) {
+        this.data = data;
+    }
 
-    public abstract byte[] getAnswer();
+    public byte[] getAnswer() {
+        return answer;
+    }
 
-    public abstract void setAnswer(byte[] answer);
+    public void setAnswer(byte[] answer) {
+        this.answer = answer;
+    }
+
+    private void genId() {
+        id = atomicInteger.getAndIncrement();
+    }
 
     public int getId() {
         return id;
@@ -31,10 +48,6 @@ public abstract class Command {
 
     public void setErr(boolean err) {
         this.err = err;
-    }
-
-    private void genId() {
-        id = atomicInteger.getAndIncrement();
     }
 
 }
