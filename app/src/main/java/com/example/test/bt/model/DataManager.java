@@ -8,9 +8,7 @@ import com.example.test.bt.model.interchange.GetPropertiesCommand;
 import com.example.test.bt.model.interchange.WriteDBRecordCommand;
 import com.example.test.bt.model.io.Client;
 
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -41,7 +39,7 @@ public class DataManager {
         busIn = PublishSubject.create();
         //testCommandGen();
         //testCommandGen2();
-        //testCommandSend();
+        testCommandSend();
 
     }
 

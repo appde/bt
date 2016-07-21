@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.test.bt.model.DataManager;
@@ -18,6 +19,8 @@ public class MainActivity extends AppCompatActivity implements BTView {
     private Button propButton;
     TextView propTextView;
     TextView dbTextView;
+    ImageView propImageView;
+    ImageView dbImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,9 @@ public class MainActivity extends AppCompatActivity implements BTView {
         dbButton.setOnClickListener(view -> btPresenter.writeDBRecord(1, 2, "db write"));
 
 
+        propImageView = (ImageView) findViewById(R.id.properties_imageView);
+        dbImageView = (ImageView) findViewById(R.id.db_record_imageView);
+
         DataManager.getInstance();
     }
 
@@ -52,8 +58,26 @@ public class MainActivity extends AppCompatActivity implements BTView {
     }
 
     @Override
+    public void indicateProperties(boolean isQueueOk) {
+        if (isQueueOk) {
+            propImageView.setBackgroundResource(android.R.color.holo_green_light);
+        } else {
+            propImageView.setBackgroundResource(android.R.color.holo_orange_light);
+        }
+    }
+
+    @Override
     public void updateWriteDBAnswer(String properties) {
         dbTextView.setText(properties);
+    }
+
+    @Override
+    public void indicateWriteDBAnswer(boolean isQueueOk) {
+        if (isQueueOk) {
+            dbImageView.setBackgroundResource(android.R.color.holo_green_light);
+        } else {
+            dbImageView.setBackgroundResource(android.R.color.holo_orange_light);
+        }
     }
 
 

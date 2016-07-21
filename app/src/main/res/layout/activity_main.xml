@@ -12,35 +12,69 @@
     tools:context="com.example.test.bt.MainActivity">
 
     <TextView
-        android:textAlignment="center"
         android:id="@+id/properties_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="16dp"
-        android:text="" />
+        android:text=""
+        android:textAlignment="center" />
 
-    <Button
-        android:id="@+id/properties_button"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
+        android:orientation="horizontal"
+        android:gravity="center"
         android:paddingBottom="16dp"
-        android:text="get properties" />
+        android:paddingTop="16dp">
+
+        <ImageView
+            android:id="@+id/properties_imageView"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:background="@android:color/holo_green_light"
+            android:paddingBottom="64dp" />
+
+        <Button
+            android:id="@+id/properties_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp"
+            android:text="get properties" />
+
+    </LinearLayout>
 
     <TextView
-        android:textAlignment="center"
         android:id="@+id/db_record_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="16dp"
-        android:text="" />
+        android:text=""
+        android:textAlignment="center" />
 
-    <Button
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp">
+
+        <ImageView
+            android:id="@+id/db_record_imageView"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:background="@android:color/holo_green_light"
+            android:paddingBottom="64dp" />
+
+
+        <Button
         android:id="@+id/db_record_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/properties_button"
         android:paddingTop="16dp"
         android:text="write db record" />
+
+    </LinearLayout>
 
 </LinearLayout>
