@@ -4,8 +4,6 @@ import android.util.Log;
 
 import com.example.test.bt.device.Server;
 import com.example.test.bt.model.interchange.Command;
-import com.example.test.bt.model.interchange.GetPropertiesCommand;
-import com.example.test.bt.model.interchange.WriteDBRecordCommand;
 import com.example.test.bt.model.io.Client;
 
 import java.util.concurrent.BlockingQueue;
@@ -21,8 +19,8 @@ import rx.subjects.PublishSubject;
 
 public class DataManager {
 
-    public static final int SERVER_TIMEOUT_MIN_MS = 2000;
-    public static final int SEND_TIMEOUT_S = 10;
+    public static final int SERVER_TIMEOUT_MIN_MS = 100;
+    public static final int SEND_TIMEOUT_S = 1;
 
     public BlockingQueue<Command> drop;
     private PublishSubject<Command> busIn;
@@ -37,10 +35,8 @@ public class DataManager {
 
         drop = new SynchronousQueue<>();
         busIn = PublishSubject.create();
-        //testCommandGen();
-        //testCommandGen2();
-        testCommandSend();
 
+        sender();
     }
 
     public static DataManager getInstance() {
@@ -54,29 +50,8 @@ public class DataManager {
         return busIn;
     }
 
-    // TODO: 20/07/2016 add consecutive performing, one command at a time
-    public Observable<Command> send(Command command) {
-        return Observable.create(new Observable.OnSubscribe<Command>() {
-            @Override
-            public void call(final Subscriber<? super Command> subscriber) {
-                new Client(command.getData()) {
-                    @Override
-                    public void onDataReceived(byte[] data) {
-                        Log.d(TAG, "send: onDataReceived: Thread: " + Thread.currentThread());
-                        Log.d(TAG, "send: onDataReceived: " + new String(data));
-                        command.setAnswer(data);
-                        subscriber.onNext(command);
-                        subscriber.onCompleted();
-                    }
-                };
-            }
-        }).subscribeOn(Schedulers.newThread())
-                .timeout(DataManager.SEND_TIMEOUT_S, java.util.concurrent.TimeUnit.SECONDS)
-                .single();
-    }
 
-
-    public BlockingObservable<Command> send2(final Command command) {
+    public BlockingObservable<Command> send(final Command command) {
         return Observable.create(new Observable.OnSubscribe<Command>() {
             @Override
             public void call(final Subscriber<? super Command> subscriber) {
@@ -98,39 +73,13 @@ public class DataManager {
                 .toBlocking();
     }
 
-    private void testCommandGen() {
-        Observable.interval(1, TimeUnit.SECONDS)
-                .subscribeOn(Schedulers.newThread())
-                .subscribe(aLong -> {
-                    try {
-                        Log.d(TAG, "testCommandGen: " + aLong);
-                        drop.put(new GetPropertiesCommand());
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                });
-    }
 
-    private void testCommandGen2() {
-        Observable.interval(2, TimeUnit.SECONDS)
-                .subscribeOn(Schedulers.newThread())
-                .subscribe(aLong -> {
-                    try {
-                        Log.d(TAG, "testCommandGen2: " + aLong);
-                        drop.put(new WriteDBRecordCommand(1, 3, "Comm"));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                });
-    }
-
-    private Subscription testCommandSend() {
+    private Subscription sender() {
         return Observable.interval(10, TimeUnit.MILLISECONDS)
                 .subscribe(aLong -> {
                     try {
-                        Log.d(TAG, "testCommandSend: " + aLong);
-                        send2(drop.take()).subscribe(command -> {
-                            Log.d(TAG, "testCommandSend: subscribe: " + new String(command.getAnswer()));
+                        send(drop.take()).subscribe(command -> {
+                            Log.d(TAG, "sender: subscribe: " + new String(command.getAnswer()));
                         });
                     } catch (InterruptedException e) {
                         e.printStackTrace();

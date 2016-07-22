@@ -1,10 +1,7 @@
 package com.example.test.bt;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -48,17 +45,12 @@ public class MainActivity extends AppCompatActivity implements BTView {
     }
 
     @Override
-    public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
-        return super.onCreateView(parent, name, context, attrs);
-    }
-
-    @Override
-    public void updateProperties(String properties) {
+    public synchronized void updateProperties(String properties) {
         propTextView.setText(properties);
     }
 
     @Override
-    public void indicateProperties(boolean isQueueOk) {
+    public synchronized void indicateProperties(boolean isQueueOk) {
         if (isQueueOk) {
             propImageView.setBackgroundResource(android.R.color.holo_green_light);
         } else {
@@ -67,12 +59,12 @@ public class MainActivity extends AppCompatActivity implements BTView {
     }
 
     @Override
-    public void updateWriteDBAnswer(String properties) {
+    public synchronized void updateWriteDBAnswer(String properties) {
         dbTextView.setText(properties);
     }
 
     @Override
-    public void indicateWriteDBAnswer(boolean isQueueOk) {
+    public synchronized void indicateWriteDBAnswer(boolean isQueueOk) {
         if (isQueueOk) {
             dbImageView.setBackgroundResource(android.R.color.holo_green_light);
         } else {

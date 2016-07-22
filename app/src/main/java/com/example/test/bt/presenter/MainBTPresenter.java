@@ -65,12 +65,12 @@ public class MainBTPresenter implements BTPresenter {
                                 DataManager.getInstance().busIn()
                                         .filter(command1 -> command1.getId() == command0.getId())
                                         .take(1)
-                                        .timeout(10, TimeUnit.SECONDS)
+                                        .timeout(DataManager.SEND_TIMEOUT_S, TimeUnit.SECONDS)
                                         .onErrorReturn(throwable -> null)
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe(command2 -> {
                                             if (command2 == null) {
-                                                Log.d(TAG, "writeDBRecord: command2: Err");
+                                                Log.d(TAG, "writeDBRecord: command2: Err: " + command2.getId());
                                                 if (isPropType) {
                                                     btView.updateProperties("N\\A");
                                                     btView.indicateProperties(false);
@@ -108,7 +108,7 @@ public class MainBTPresenter implements BTPresenter {
                 boolean offered = false;
                 try {
                     offered = DataManager.getInstance().drop
-                            .offer(command, 1, TimeUnit.SECONDS);
+                            .offer(command, DataManager.SEND_TIMEOUT_S, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
