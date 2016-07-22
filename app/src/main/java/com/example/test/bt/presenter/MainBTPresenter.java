@@ -66,10 +66,13 @@ public class MainBTPresenter implements BTPresenter {
                                         .filter(command1 -> command1.getId() == command0.getId())
                                         .take(1)
                                         .timeout(DataManager.SEND_TIMEOUT_S, TimeUnit.SECONDS)
-                                        .onErrorReturn(throwable -> null)
+                                        .onErrorReturn(throwable -> {
+                                            command0.setErr(true);
+                                            return command;
+                                        })
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe(command2 -> {
-                                            if (command2 == null) {
+                                            if (command2.isErr()) {
                                                 Log.d(TAG, "writeDBRecord: command2: Err: " + command2.getId());
                                                 if (isPropType) {
                                                     btView.updateProperties("N\\A");

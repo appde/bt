@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -11,79 +10,86 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.test.bt.MainActivity">
 
-    <TextView
-        android:id="@+id/properties_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="16dp"
-        android:text=""
-        android:textAlignment="center" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="10"
         android:gravity="center"
-        android:layout_weight="3"
-        android:orientation="horizontal"
-        android:paddingBottom="16dp"
-        android:paddingTop="16dp">
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/properties_imageView"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginRight="16dp"
-            android:background="@android:color/holo_green_light"
-            android:paddingBottom="64dp" />
-
-        <Button
-            android:id="@+id/properties_button"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/properties_text_view"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:text=""
+            android:textAlignment="center" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
             android:paddingBottom="16dp"
-            android:paddingTop="16dp"
-            android:text="get properties" />
+            android:paddingTop="16dp">
 
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/properties_imageView"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@android:color/holo_green_light"
+                android:paddingBottom="64dp" />
 
-    <TextView
-        android:id="@+id/db_record_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="16dp"
-        android:text=""
-        android:textAlignment="center" />
+            <Button
+                android:id="@+id/properties_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp"
+                android:text="get properties" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingBottom="16dp"
-        android:paddingTop="16dp">
+        </LinearLayout>
 
-        <ImageView
-            android:id="@+id/db_record_imageView"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginRight="16dp"
-            android:background="@android:color/holo_green_light"
-            android:paddingBottom="64dp" />
-
-        <Button
-            android:id="@+id/db_record_button"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/db_record_text_view"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
-            android:text="write db record" />
+            android:text=""
+            android:textAlignment="center" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp">
+
+            <ImageView
+                android:id="@+id/db_record_imageView"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@android:color/holo_green_light"
+                android:paddingBottom="64dp" />
+
+            <Button
+                android:id="@+id/db_record_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:text="write db record" />
+
+        </LinearLayout>
     </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:layout_gravity="bottom"
+        android:layout_weight="1"
         android:gravity="bottom"
         android:orientation="vertical">
 

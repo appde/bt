@@ -19,7 +19,7 @@ import rx.subjects.PublishSubject;
 
 public class DataManager {
 
-    public static final int SERVER_TIMEOUT_MIN_MS = 100;
+    public static final int SERVER_TIMEOUT_MIN_MS = 10000;
     public static final int SEND_TIMEOUT_S = 1;
 
     public BlockingQueue<Command> drop;
@@ -67,8 +67,15 @@ public class DataManager {
                     }
                 };
             }
+
+
         }).subscribeOn(Schedulers.newThread())
                 .timeout(DataManager.SEND_TIMEOUT_S, java.util.concurrent.TimeUnit.SECONDS)
+                .onErrorReturn(throwable -> {
+                    command.setErr(true);
+                    busIn.onNext(command);
+                    return command;
+                })
                 .single()
                 .toBlocking();
     }
