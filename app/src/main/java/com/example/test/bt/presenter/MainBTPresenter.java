@@ -23,6 +23,9 @@ public class MainBTPresenter implements BTPresenter {
     private static final AtomicInteger maxDBWriteCommandId = new AtomicInteger(0);
     private static final AtomicInteger maxPropCommandId = new AtomicInteger(0);
 
+    private static final AtomicInteger lastDBWriteCommandId = new AtomicInteger(0);
+    private static final AtomicInteger lastPropCommandId = new AtomicInteger(0);
+
     @Override
     public void attachView(BTView btView) {
         this.btView = btView;
@@ -53,12 +56,21 @@ public class MainBTPresenter implements BTPresenter {
         put(command)
                 .subscribe(command0 -> {
                             boolean isPropType = command0 instanceof GetPropertiesCommand;
+                            if (isPropType) {
+                                if (command0.getId() > lastPropCommandId.get()) {
+                                    lastPropCommandId.set(command0.getId());
+                                }
+                            } else {
+                                if (command0.getId() > lastDBWriteCommandId.get()) {
+                                    lastDBWriteCommandId.set(command0.getId());
+                                }
+                            }
 
                             if (command0.isErr()) {
                                 Log.d(TAG, "perform: command0.isErr()=true command0.getId()=" + command0.getId());
-                                if (isPropType) {
+                                if (isPropType && command0.getId() >= lastPropCommandId.get()) {
                                     btView.indicateProperties(false);
-                                } else {
+                                } else if (!isPropType && command0.getId() >= lastDBWriteCommandId.get()){
                                     btView.indicateWriteDBAnswer(false);
                                 }
                             } else {
@@ -74,23 +86,23 @@ public class MainBTPresenter implements BTPresenter {
                                         .subscribe(command2 -> {
                                             if (command2.isErr()) {
                                                 Log.d(TAG, "perform: command2: Err: " + command2.getId());
-                                                if (isPropType) {
+                                                if (isPropType && command0.getId() >= lastPropCommandId.get()) {
                                                     btView.updateProperties("N\\A".getBytes());
                                                     btView.indicateProperties(false);
-                                                } else {
+                                                } else if (!isPropType && command0.getId() >= lastDBWriteCommandId.get()){
                                                     btView.updateWriteDBAnswer("N\\A".getBytes());
                                                     btView.indicateWriteDBAnswer(false);
                                                 }
                                             } else {
                                                 Log.d(TAG, "perform: command2: " + command2.getId() + " " + new String(command2.getAnswer()));
-                                                if (isPropType) {
+                                                if (isPropType && command0.getId() >= lastPropCommandId.get()) {
                                                     btView.updateProperties(command2.getAnswer());
-                                                } else {
+                                                } else if (!isPropType && command0.getId() >= lastDBWriteCommandId.get()){
                                                     btView.updateWriteDBAnswer(command2.getAnswer());
                                                 }
-                                                if (isPropType && command2.getId() == maxPropCommandId.get()) {
+                                                if (isPropType && command0.getId() >= lastPropCommandId.get()) {
                                                     btView.indicateProperties(true);
-                                                } else if (!isPropType && command2.getId() == maxDBWriteCommandId.get()) {
+                                                } else if (!isPropType && command0.getId() >= lastDBWriteCommandId.get()) {
                                                     btView.indicateWriteDBAnswer(true);
                                                 }
                                             }

@@ -107,7 +107,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:paddingBottom="8dp"
-            android:text="Last command state" />
+            android:text="Last command state by commandId" />
 
         <LinearLayout
             android:layout_width="match_parent"
