@@ -2,11 +2,11 @@ package com.example.test.bt;
 
 public interface BTView {
 
-    void updateProperties(String properties);
+    void updateProperties(byte[] properties);
 
     void indicateProperties(boolean isQueueOk);
 
-    void updateWriteDBAnswer(String properties);
+    void updateWriteDBAnswer(byte[] answer);
 
     void indicateWriteDBAnswer(boolean isQueueOk);
 

@@ -60,8 +60,8 @@ public class DataManager {
                     public void onDataReceived(byte[] data) {
                         Log.d(TAG, "send: onDataReceived: Thread: " + Thread.currentThread());
                         Log.d(TAG, "send: onDataReceived: " + new String(data));
-                        busIn.onNext(command);
                         command.setAnswer(data);
+                        busIn.onNext(command);
                         subscriber.onNext(command);
                         subscriber.onCompleted();
                     }

@@ -55,7 +55,7 @@ public class MainBTPresenter implements BTPresenter {
                             boolean isPropType = command0 instanceof GetPropertiesCommand;
 
                             if (command0.isErr()) {
-                                Log.d(TAG, "writeDBRecord: command0.isErr()=true command0.getId()=" + command0.getId());
+                                Log.d(TAG, "perform: command0.isErr()=true command0.getId()=" + command0.getId());
                                 if (isPropType) {
                                     btView.indicateProperties(false);
                                 } else {
@@ -73,20 +73,20 @@ public class MainBTPresenter implements BTPresenter {
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe(command2 -> {
                                             if (command2.isErr()) {
-                                                Log.d(TAG, "writeDBRecord: command2: Err: " + command2.getId());
+                                                Log.d(TAG, "perform: command2: Err: " + command2.getId());
                                                 if (isPropType) {
-                                                    btView.updateProperties("N\\A");
+                                                    btView.updateProperties("N\\A".getBytes());
                                                     btView.indicateProperties(false);
                                                 } else {
-                                                    btView.updateWriteDBAnswer("N\\A");
+                                                    btView.updateWriteDBAnswer("N\\A".getBytes());
                                                     btView.indicateWriteDBAnswer(false);
                                                 }
                                             } else {
-                                                Log.d(TAG, "writeDBRecord: command2: " + command2.getId());
+                                                Log.d(TAG, "perform: command2: " + command2.getId() + " " + new String(command2.getAnswer()));
                                                 if (isPropType) {
-                                                    btView.updateProperties(new String(command2.getAnswer()));
+                                                    btView.updateProperties(command2.getAnswer());
                                                 } else {
-                                                    btView.updateWriteDBAnswer(new String(command2.getAnswer()));
+                                                    btView.updateWriteDBAnswer(command2.getAnswer());
                                                 }
                                                 if (isPropType && command2.getId() == maxPropCommandId.get()) {
                                                     btView.indicateProperties(true);
